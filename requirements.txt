@@ -1,5 +1,6 @@
 dask[distributed] ~= 2026.7
 earthaccess[virtualizarr] ~= 0.18
+fastparquet ~= 2024.11
 h5netcdf ~= 1.8
 ipykernel ~= 7.2
 jupyter ~= 1.1
