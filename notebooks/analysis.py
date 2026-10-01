@@ -569,11 +569,12 @@ def _read_record_in_blocks(
     sm: xr.DataArray,
     retries: int = 2,
     retry_wait: float = 2.0,
+    context: str = "the FC/WP percentiles",
 ) -> xr.DataArray:
     """Materialise `sm` over its whole time span, tolerating unreachable references.
 
     If a chunk (aka a month) is repeatedly unreadable it gets skipped which will add uncertainty to
-    the percentiles but it's a tradeoff to get the large amount of data we're reading from the VDS to
+    the result but it's a tradeoff to get the large amount of data we're reading from the VDS to
     process without throwing an exception.
 
     Arguments:
@@ -582,6 +583,8 @@ def _read_record_in_blocks(
             means up to three tries) before the month is skipped.
         retry_wait (float): Base seconds to wait between attempts. The wait grows
             with each attempt to let a transient outage clear.
+        context (str): Short phrase naming what the read feeds, used in the warning
+            messages (e.g. "the FC/WP percentiles" or "the SWDI time series").
 
     Returns:
         xr.DataArray: The successfully read months concatenated and sorted in
@@ -607,16 +610,16 @@ def _read_record_in_blocks(
                     continue
                 skipped += 1
                 warnings.warn(
-                    f"Skipping {label} while reading soil moisture for the FC/WP "
-                    f"percentiles (unreadable after {retries + 1} tries): {exc!r}",
+                    f"Skipping {label} while reading soil moisture for {context} "
+                    f"(unreadable after {retries + 1} tries): {exc!r}",
                     stacklevel=2,
                 )
     if not blocks:
-        msg = "Could not read any soil moisture for the FC/WP percentiles."
+        msg = f"Could not read any soil moisture for {context}."
         raise RuntimeError(msg)
     if skipped:
         warnings.warn(
-            f"FC/WP percentiles computed with {skipped} month(s) skipped due to "
+            f"{context} computed with {skipped} month(s) skipped due to "
             "unreachable references.",
             stacklevel=2,
         )
@@ -868,6 +871,7 @@ def swdi_timeseries(
     sm = sm_full
     if start is not None or stop is not None:
         sm = sm.sel(time=slice(start, stop))
+    sm = _read_record_in_blocks(sm, context="the SWDI time series")
     sm = sm.resample(time=freq).mean()
 
     swdi = (sm - field_capacity) / (field_capacity - wilting_point) * 10.0
