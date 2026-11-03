@@ -29,7 +29,7 @@ By the end of this course, you will learn how to:
 ## Installation
 
 1. **Install Python or Anaconda.** If you do not already have one of these installed:
-   * **Python users:** Download Python 3.13 from [python.org](https://www.python.org/downloads/) (scroll down to "Looking for a specific release?") and run the installer. Python 3.12 also works, but **Python 3.14 and newer are not supported yet**, because some of the packages used in this course are not available for them. On a Mac, this option needs macOS 14 or newer (Apple Silicon) or macOS 15 or newer (Intel); on older Macs, please use Anaconda instead.
+   * **Python users:** Download Python 3.12 or later from [python.org](https://www.python.org/downloads/) and run the installer.
    * **Anaconda users:** Download Anaconda from [anaconda.com](https://www.anaconda.com/download) and run the installer.
 
 2. **Download the course materials.** Click the green "Code" button at the top of this page, select "Download ZIP", and unpack the zip file wherever you like. The unpacked folder will be called `flash-drought-ARSET-main`. Alternatively, you can clone this repository if you know how to do so.

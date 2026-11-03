@@ -5,19 +5,6 @@ set -e
 cd "$(dirname "$0")"
 
 VENV=flash-drought
-# The pinned packages in requirements.txt only have pre-built versions for these Python
-# releases. Newer releases (3.14+) would need fastparquet to be compiled, which usually fails.
-SUPPORTED="3.13 3.12"
-
-# Succeeds if the given Python command runs and is one of the SUPPORTED versions
-is_supported() {
-    local version
-    version=$("$1" -c 'import sys; print("%d.%d" % sys.version_info[:2])' 2>/dev/null) || return 1
-    case " $SUPPORTED " in
-        *" $version "*) return 0 ;;
-        *) return 1 ;;
-    esac
-}
 
 # rasterio and pyproj only provide pre-built macOS packages for macOS 14+ on Apple Silicon
 # and macOS 15+ on Intel Macs. Anaconda provides them for older versions of macOS.
@@ -31,28 +18,21 @@ if [ "$(uname)" = "Darwin" ]; then
     fi
 fi
 
-if [ -x "$VENV/bin/python" ] && is_supported "$VENV/bin/python"; then
+if [ -x "$VENV/bin/python" ]; then
     echo "Using the existing $VENV environment"
 else
-    PYTHON=""
-    for cmd in python3.13 python3.12 python3 python; do
-        if command -v "$cmd" >/dev/null 2>&1 && is_supported "$cmd"; then
-            PYTHON="$cmd"
-            break
-        fi
-    done
-    if [ -z "$PYTHON" ]; then
-        echo "Error: this course needs Python 3.13 or 3.12, which was not found." >&2
+    # The python3 that comes with macOS is too old (3.9), so check the version first
+    if ! python3 -c 'import sys; sys.exit(sys.version_info < (3, 12))' 2>/dev/null; then
+        echo "Error: this course needs Python 3.12 or newer, which was not found." >&2
         if command -v python3 >/dev/null 2>&1; then
             echo "(python3 is $(python3 --version 2>&1), which will not work.)" >&2
         fi
-        echo "Install Python 3.13 from https://www.python.org/downloads/ (not 3.14 or newer), open a" >&2
-        echo "new Terminal window, and run this script again. Or install Anaconda and run setup-conda.sh." >&2
+        echo "Install Python from https://www.python.org/downloads/, open a new Terminal window," >&2
+        echo "and run this script again. Or install Anaconda and run setup-conda.sh." >&2
         exit 1
     fi
-    echo "Creating the $VENV environment with $("$PYTHON" --version)"
-    # --clear replaces an environment left over from an unsupported Python version
-    "$PYTHON" -m venv --clear "$VENV"
+    echo "Creating the $VENV environment with $(python3 --version)"
+    python3 -m venv "$VENV"
 fi
 
 source "$VENV/bin/activate"

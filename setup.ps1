@@ -3,9 +3,6 @@
 Set-Location $PSScriptRoot
 
 $venv = "flash-drought"
-# The pinned packages in requirements.txt only have pre-built versions for these Python
-# releases. Newer releases (3.14+) would need fastparquet to be compiled, which usually fails.
-$supported = @("3.13", "3.12")
 
 function Fail($message) {
     Write-Host "`nERROR: $message" -ForegroundColor Red
@@ -14,45 +11,30 @@ function Fail($message) {
     exit 1
 }
 
-# Returns the "major.minor" version of a Python command, or $null if it does not run.
+# Succeeds if the given command runs Python 3.12 or newer.
 # On Windows, "python" is often missing from the PATH (the python.org installer leaves that
 # box unchecked by default) or is the Microsoft Store placeholder, which does not run Python.
-function Get-PythonVersion($exe, $exeArgs) {
-    if (-not (Get-Command $exe -ErrorAction SilentlyContinue)) { return $null }
+function Test-Python($exe) {
+    if (-not (Get-Command $exe -ErrorAction SilentlyContinue)) { return $false }
     try {
-        $version = & $exe @exeArgs -c "import sys; print('%d.%d' % sys.version_info[:2])" 2>$null
-        if ($LASTEXITCODE -eq 0 -and $version) { return "$version".Trim() }
-    } catch {}
-    return $null
+        $null = & $exe -c "import sys; sys.exit(sys.version_info < (3, 12))" 2>$null
+        return ($LASTEXITCODE -eq 0)
+    } catch { return $false }
 }
 
 $venvPython = [IO.Path]::Combine($PSScriptRoot, $venv, "Scripts", "python.exe")
-if ((Test-Path $venvPython) -and ($supported -contains (Get-PythonVersion $venvPython @()))) {
+if (Test-Path $venvPython) {
     Write-Host "Using the existing $venv environment" -ForegroundColor Green
 } else {
-    # Try the "py" launcher first, since it can pick a specific installed version
-    $candidates = @(
-        @("py", @("-3.13")),
-        @("py", @("-3.12")),
-        @("python", @()),
-        @("python3", @())
-    )
-    $pyExe = $null
-    foreach ($candidate in $candidates) {
-        if ($supported -contains (Get-PythonVersion $candidate[0] $candidate[1])) {
-            $pyExe = $candidate[0]
-            $pyArgs = $candidate[1]
-            break
-        }
-    }
+    # Try the "py" launcher first, since python.org installs it even when "python" is not on the PATH
+    $pyExe = @("py", "python") | Where-Object { Test-Python $_ } | Select-Object -First 1
     if (-not $pyExe) {
-        Fail ("This course needs Python 3.13 or 3.12, which was not found. Install Python 3.13 " +
-              "from https://www.python.org/downloads/ (not 3.14 or newer) and run this script " +
-              "again in a new PowerShell window. Or install Anaconda and run .\setup-conda.ps1.")
+        Fail ("This course needs Python 3.12 or newer, which was not found. Install Python from " +
+              "https://www.python.org/downloads/ and run this script again in a new PowerShell " +
+              "window. Or install Anaconda and run .\setup-conda.ps1.")
     }
-    Write-Host "Creating the $venv environment with Python $(Get-PythonVersion $pyExe $pyArgs)" -ForegroundColor Green
-    # --clear replaces an environment left over from an unsupported Python version
-    & $pyExe @pyArgs -m venv --clear $venv
+    Write-Host "Creating the $venv environment with $(& $pyExe --version)" -ForegroundColor Green
+    & $pyExe -m venv $venv
     if ($LASTEXITCODE -ne 0 -or -not (Test-Path $venvPython)) { Fail "Creating the $venv environment failed." }
 }
 
