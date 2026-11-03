@@ -29,16 +29,16 @@ By the end of this course, you will learn how to:
 ## Installation
 
 1. **Install Python or Anaconda.** If you do not already have one of these installed:
-   * **Python users:** Download Python 3.12 or later from [python.org](https://www.python.org/downloads/) and run the installer.
+   * **Python users:** Download Python 3.13 from [python.org](https://www.python.org/downloads/) (scroll down to "Looking for a specific release?") and run the installer. Python 3.12 also works, but **Python 3.14 and newer are not supported yet**, because some of the packages used in this course are not available for them. On a Mac, this option needs macOS 14 or newer (Apple Silicon) or macOS 15 or newer (Intel); on older Macs, please use Anaconda instead.
    * **Anaconda users:** Download Anaconda from [anaconda.com](https://www.anaconda.com/download) and run the installer.
 
-2. **Download the course materials.** Click the green "Code" button at the top of this page, select "Download ZIP", and unpack the zip file wherever you like. Alternatively, you can clone this repository if you know how to do so.
+2. **Download the course materials.** Click the green "Code" button at the top of this page, select "Download ZIP", and unpack the zip file wherever you like. The unpacked folder will be called `flash-drought-ARSET-main`. Alternatively, you can clone this repository if you know how to do so.
 
 3. **Set up your NASA Earthdata account.** If you do not already have an account, go to [Earthdata Login](https://urs.earthdata.nasa.gov/) and create one. Remember the username and password you used.
 
-4. **Open Terminal (MacOS) or PowerShell (Windows) and navigate to the `flash-drought-ARSET` directory where you unpacked the code.** For example, if you unpacked it in your Downloads folder, run:
-   * MacOS/Linux: `cd ~/Downloads/flash-drought-ARSET`
-   * Windows: `cd ~\Downloads\flash-drought-ARSET`
+4. **Open Terminal (MacOS) or PowerShell (Windows) and navigate to the folder where you unpacked the code** (`flash-drought-ARSET-main` if you downloaded the ZIP, or `flash-drought-ARSET` if you cloned the repository). For example, if you unpacked the ZIP in your Downloads folder, run:
+   * MacOS/Linux: `cd ~/Downloads/flash-drought-ARSET-main`
+   * Windows: `cd ~\Downloads\flash-drought-ARSET-main`
 
 5. **Run the setup script to install dependencies and open the Jupyter Notebook in a browser window.**
 * Anaconda users on Windows, run `.\setup-conda.ps1` in PowerShell.
@@ -46,9 +46,9 @@ By the end of this course, you will learn how to:
 * Anaconda users on MacOS/Linux, run `bash setup-conda.sh` in Terminal.
 * Python users on MacOS/Linux, run `bash setup.sh` in Terminal.
 
-> **Windows users:** If you see an error saying that running scripts is disabled, run the following command in PowerShell first, then try running the setup script again:
+> **Windows users:** If you see an error saying that running scripts is disabled, or that the script "is not digitally signed", run the setup script this way instead (Anaconda users: replace `setup.ps1` with `setup-conda.ps1`):
 > ```powershell
-> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+> powershell -ExecutionPolicy Bypass -File .\setup.ps1
 > ```
 
 If you would like to open the Jupyter Notebook on subsequent uses once your environment is set up, simply run the setup script again.
