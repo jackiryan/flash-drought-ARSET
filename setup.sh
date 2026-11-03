@@ -7,7 +7,8 @@ cd "$(dirname "$0")"
 VENV=flash-drought
 
 # rasterio and pyproj only provide pre-built macOS packages for macOS 14+ on Apple Silicon
-# and macOS 15+ on Intel Macs. Anaconda provides them for older versions of macOS.
+# and macOS 15+ on Intel Macs (with --prefer-binary below, since some newer releases need
+# macOS 15 on Apple Silicon too). Anaconda provides them for older versions of macOS.
 if [ "$(uname)" = "Darwin" ]; then
     macos_major=$(sw_vers -productVersion | cut -d. -f1)
     if [ "$(uname -m)" = "arm64" ]; then min_macos=14; else min_macos=15; fi
@@ -37,6 +38,8 @@ fi
 
 source "$VENV/bin/activate"
 python -m pip install --upgrade pip setuptools wheel
-python -m pip install -r requirements.txt
+# --prefer-binary picks an older pre-built release over compiling a newer one from source,
+# which would fail because it needs libraries (such as GDAL) that are not installed
+python -m pip install --prefer-binary -r requirements.txt
 python -m ipykernel install --user --name=flash-drought --display-name "Python (flash-drought)"
 jupyter lab notebooks/1_drought_indicators.ipynb

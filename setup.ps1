@@ -43,7 +43,9 @@ if (Test-Path $venvPython) {
 & $venvPython -m pip install --upgrade pip setuptools wheel
 if ($LASTEXITCODE -ne 0) { Fail "Upgrading pip failed (see the messages above)." }
 
-& $venvPython -m pip install -r requirements.txt
+# --prefer-binary picks an older pre-built release over compiling a newer one from source,
+# which would fail because it needs libraries (such as GDAL) that are not installed
+& $venvPython -m pip install --prefer-binary -r requirements.txt
 if ($LASTEXITCODE -ne 0) { Fail "Installing the packages in requirements.txt failed (see the messages above)." }
 
 & $venvPython -m ipykernel install --user --name=flash-drought --display-name "Python (flash-drought)"
