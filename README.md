@@ -1,11 +1,20 @@
 # Flash Drought NASA ARSET Course
 ### Agricultural Flash Drought Detection Using Solar-Induced Fluorescence (SIF) and Soil Moisture Data
 
+**ARSET Course Link**: https://www.earthdata.nasa.gov/learn/trainings/agricultural-flash-drought-detection-using-solar-induced-fluorescence-sif-soil
+
 This repository contains code the NASA ARSET course on Agricultural Flash Drought. The training is comprised of two exercises with additional material in a third notebook:
 
 1. **1_drought_indicators.ipynb**: Methods for retrieving SIF and Soil Moisture data from the OCO-2 and SMAP missions, and deriving time series of the Rapid Change Index (RCI) and Soil Water Deficit Index (SWDI) based on these measurements. These indicators will be used to assess flash droughts in two real-world scenarios.
 2. **2_detection.ipynb**: We will apply the indicators we derived in the first exercise to build a framework for detecting flash droughts in general. The effectiveness of different definitions of flash drought will be compared.
 3. **3_appendix.ipynb**: An appendix notebook is included to explain how the contents of the `notebooks/inputs/` directory were derived. These inputs are the result of steps that take a long time to run and so were pre-processed to improve the experience of running the main two notebooks.
+
+## Youtube Links
+
+* Part 1: https://www.youtube.com/watch?v=ZMQZBUs6n0g
+* Part 2: https://www.youtube.com/watch?v=6nlZeWZgHXs
+
+Note that some material shown in the video walkthroughs has changed since recording in response to issues encountered by participants and course feedback. If you would like to follow along on your own, you should use the current version of the Jupyter Notebooks rather than trying to copy the code from the Youtube recordings.
 
 ## Learning Objectives
 
