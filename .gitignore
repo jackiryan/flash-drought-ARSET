@@ -154,6 +154,8 @@ activemq-data/
 *.sage.py
 
 # Environments
+# Python environment created by setup.sh / setup.ps1
+flash-drought/
 .env
 .envrc
 .venv
